@@ -3,6 +3,7 @@ package com.hyangyoun;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
@@ -78,7 +79,7 @@ public class EventManager implements Listener {
                 case DIAMOND_SWORD:
                     if(event.getRawSlot() == 4){
                         if(event.isRightClick()){
-                            ItemMeta weapon = WeaponUpgrade(event.getCurrentItem().getItemMeta(),1.6f,7);
+                            ItemMeta weapon = WeaponUpgrade(event.getCurrentItem().getItemMeta(),1.6f,7,player);
                             if(weapon==null){
                                 event.setCurrentItem(null);
                             }
@@ -113,7 +114,7 @@ public class EventManager implements Listener {
         player.openInventory(starPos);
     }
 
-    public ItemMeta WeaponUpgrade(ItemMeta item,float attackSpeed, float attackDamage){
+    public ItemMeta WeaponUpgrade(ItemMeta item,float attackSpeed, float attackDamage, Player player){
         Integer ilsp = null, ilfp = null, ildp = null;
         Integer sp = null, fp = null, dp = null;
         float ad = attackDamage;
@@ -125,9 +126,13 @@ public class EventManager implements Listener {
                     AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HAND));
             item.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE,new AttributeModifier(UUID.randomUUID(),"attack.damage",ad+0.2,
                     AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HAND));
+            item.setCustomModelData(1);
+            player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE,0.1f,1);
+            return item;
         }
         else{
-            switch (item.getCustomModelData()){
+            int posPoint = item.getCustomModelData();
+            switch (posPoint){
                 case 1:
                     ilsp = 80;
                     ilfp = 5;
@@ -231,12 +236,17 @@ public class EventManager implements Listener {
                         AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HAND));
                 item.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE,new AttributeModifier(UUID.randomUUID(),"attack.damage",ad,
                         AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HAND));
-                item.setCustomModelData(item.getCustomModelData()+1);
+                item.setCustomModelData(posPoint+1);
+                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE,0.1f,1);
                 return item;
             }
             else{
-                if(new Random().nextInt(100)<fp){
-                    switch (item.getCustomModelData()){
+                if(new Random().nextInt(100)<dp) {
+                    player.playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 0.3f, 1);
+                    return null;
+                }
+                else if(new Random().nextInt(100)<fp){
+                    switch (posPoint){
                         case 2:
                             ilsp = 90;
                             ilfp = 0;
@@ -305,17 +315,15 @@ public class EventManager implements Listener {
                             AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HAND));
                     item.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE,new AttributeModifier(UUID.randomUUID(),"attack.damage",ad,
                             AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HAND));
-                    item.setCustomModelData(item.getCustomModelData()-1);
+                    item.setCustomModelData(posPoint-1);
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_DESTROY,0.1f,1);
                     return item;
                 }
-                else if(new Random().nextInt(100)<dp){
-                    return null;
-                }
                 else{
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE,0.1f,1);
                     return item;
                 }
             }
         }
-        return item;
     }
 }

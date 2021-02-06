@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/StarPosPlugin.iml" filepath="$PROJECT_DIR$/StarPosPlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/UpgradeItemPlugin.iml" filepath="$PROJECT_DIR$/UpgradeItemPlugin.iml" />
     </modules>
   </component>
 </project>
