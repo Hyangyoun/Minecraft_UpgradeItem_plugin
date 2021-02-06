@@ -1,0 +1,4 @@
+name: StarPosPlugin
+version: 1.0
+main: com.hyangyoun.Main
+api-version: 1.16
