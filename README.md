@@ -1,4 +1,4 @@
-Item# Item Upgrade Pluign
+# Item Upgrade Pluign
 ## 소개
 Spigot 기반의 아이템 강화 플러그인 입니다. / ver 1.16.5
 ## 사용법
