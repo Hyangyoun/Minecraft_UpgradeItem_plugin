@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Item_Upgrade">
+    <output-path>$PROJECT_DIR$/../Minecraft_1.16.5_SpigotAPI/plugins</output-path>
+    <root id="archive" name="Item_Upgrade.jar">
+      <element id="module-output" name="UpgradeItemPlugin" />
+      <element id="dir-copy" path="$PROJECT_DIR$/resources" />
+    </root>
+  </artifact>
+</component>
