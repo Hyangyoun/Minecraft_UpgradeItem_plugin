@@ -1,5 +1,7 @@
 package com.hyangyoun;
 
+import net.minecraft.server.v1_16_R3.Enchantment;
+import net.minecraft.server.v1_16_R3.WeightedRandomEnchant;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -36,18 +38,17 @@ public class EventManager implements Listener {
     public void onOpenAnvil(PlayerInteractEvent event){
         Player p = (Player)event.getPlayer();
         Action action = event.getAction();
-        ItemStack is = new ItemStack(Material.NETHER_STAR);
-        ItemMeta im = is.getItemMeta();
-        im.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE,new AttributeModifier(new UUID(7092,7092),"af",500f, AttributeModifier.Operation.ADD_NUMBER,EquipmentSlot.HAND));
-        is.setItemMeta(im);
         if(event.getClickedBlock() != null && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
             if(event.getClickedBlock().getType().equals(Material.ANVIL)){
                 event.setCancelled(true);
                 OpenInventory(p);
             }
         }
-        if(action.equals(Action.RIGHT_CLICK_AIR)&&p.getInventory().getItemInMainHand().equals(is)){
-            p.sendMessage("gd");
+        if(event.getClickedBlock() != null && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
+            if(event.getClickedBlock().getType().equals(Material.ENCHANTING_TABLE)){
+                event.setCancelled(true);
+                OpenEnchant(p);
+            }
         }
     }
 
@@ -69,10 +70,10 @@ public class EventManager implements Listener {
     public void ClickStarposInventory(InventoryClickEvent event){
         Player player = (Player)event.getWhoClicked();
 
-        if(!event.getView().getTitle().equalsIgnoreCase("스타포스")){
+        if(!event.getView().getTitle().equalsIgnoreCase("스타포스") || !event.getView().getTitle().equalsIgnoreCase("잠재능력")){
             return;
         }
-        if(event.getCurrentItem() != null){
+        if(event.getCurrentItem() != null && event.getView().getTitle().equalsIgnoreCase("스타포스")){
             switch (event.getCurrentItem().getType()){
                 case PAPER:
                     event.setCancelled(true);
@@ -257,6 +258,16 @@ public class EventManager implements Listener {
                     break;
             }
         }
+
+        if(event.getCurrentItem() != null && event.getView().getTitle().equalsIgnoreCase("잠재능력")){
+            switch (event.getCurrentItem().getType()){
+                case BOOK:
+                    event.setCancelled(true);
+                    break;
+                case DIAMOND_SWORD:
+                    event.setCancelled(true);
+            }
+        }
     }
 
     public void OpenInventory(Player player){
@@ -276,13 +287,30 @@ public class EventManager implements Listener {
         starPos.setItem(8,paper);
         player.openInventory(starPos);
     }
+    public void OpenEnchant(Player player){
+        Inventory enchant = Bukkit.createInventory(null, 9 , "잠재능력");
+        ItemStack book = new ItemStack(Material.BOOK);
+        ItemMeta bookm = book.getItemMeta();
+        bookm.setDisplayName(ChatColor.GOLD+"잠재능력 부여");
+        book.setItemMeta(bookm);
+
+        enchant.setItem(0,book);
+        enchant.setItem(1,book);
+        enchant.setItem(2,book);
+        enchant.setItem(3,book);
+        enchant.setItem(5,book);
+        enchant.setItem(6,book);
+        enchant.setItem(7,book);
+        enchant.setItem(8,book);
+        player.openInventory(enchant);
+    }
 
     public ItemMeta WeaponUpgrade(ItemMeta item,float attackSpeed, float attackDamage, Player player){
         Integer ilsp = null, ilfp = null, ildp = null;
         Integer sp = null, fp = null, dp = null;
         float ad = attackDamage;
         String star;
-        if(item.getLore() == null){
+        if(!item.hasCustomModelData()){
             item.setLore(Arrays.asList(ChatColor.GOLD+"★☆☆☆☆☆☆☆☆☆","",ChatColor.WHITE+"성공 확률: "+ChatColor.GREEN+"90%"
                     ,ChatColor.WHITE+"하락 확률: "+ChatColor.RED+"0%",ChatColor.WHITE+"파괴 확률: "+ChatColor.DARK_RED+"0%"));
             item.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,new AttributeModifier(UUID.randomUUID(),"diaswordas",attackSpeed,
@@ -489,7 +517,7 @@ public class EventManager implements Listener {
         Integer sp = null, fp = null, dp = null;
         float mh = 0;
         String star;
-        if(item.getLore() == null){
+        if(!item.hasCustomModelData()){
             item.setLore(Arrays.asList(ChatColor.GOLD+"★☆☆☆☆☆☆☆☆☆","",ChatColor.WHITE+"성공 확률: "+ChatColor.GREEN+"90%"
                     ,ChatColor.WHITE+"하락 확률: "+ChatColor.RED+"0%",ChatColor.WHITE+"파괴 확률: "+ChatColor.DARK_RED+"0%"));
             item.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS,new AttributeModifier(UUID.randomUUID(),"armor.toughness",armor_toughness,
